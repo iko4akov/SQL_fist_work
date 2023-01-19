@@ -2,6 +2,7 @@ import sqlite3
 
 
 def find_rating(rait):
+    """Получает рейтинг фильма возвращает список словарей в виде название, райтинг, описание"""
     result = []
     for i in range(len(rait)):
         with sqlite3.connect('././netflix.db') as connect:
