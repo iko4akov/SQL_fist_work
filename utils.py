@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 def find_in_db(film_name):
     """Получает строку возвращает все совпадения с полученной строкой и названиями фильмов"""
@@ -26,6 +27,7 @@ def find_in_db(film_name):
             result.append(dict_db)
         return result
 
+    
 def find_genre(genre):
     """Получает жанр и возвращает 10 фильмов самых свежих"""
     result = []
@@ -70,3 +72,26 @@ def serch_actors(name_one, name_two):
             if result.count(name) > 2 and name_two != name != name_one:
                 colleagues.append(name)
         return set(colleagues)
+
+    
+def search_3_elems(type_r, year, genre):
+    """Получает 3 значения
+    возвращает список словарей в виде название фильма и описания"""
+    with sqlite3.connect('netflix.db') as connect:
+        cursor = connect.cursor()
+        sqlite_query = (f"""
+                       SELECT title, description
+                       FROM netflix 
+                       WHERE "type" = '{type_r}'
+                       AND "release_year" = '{year}'
+                       AND "listed_in" LIKE '%{genre}%'                        
+                        """)
+        cursor.execute(sqlite_query)
+        result = []
+        for row in cursor.fetchall():
+            data_dict = {}
+            data_dict['title'] = row[0]
+            data_dict['description'] = row[1]
+            result.append(data_dict)
+        result_json = json.dumps(result, ensure_ascii=False)
+        return result_json
