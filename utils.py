@@ -1,13 +1,13 @@
 import sqlite3
 
-def find_in_db(user_input):
-    """Поиск по словам в названии"""
+def find_in_db(film_name):
+    """Получает строку возвращает все совпадения с полученной строкой и названиями фильмов"""
     with sqlite3.connect('netflix.db') as connect:
         cursor = connect.cursor()
         sqlite_query = f"""
                         SELECT title, country, release_year, listed_in, description
                         FROM netflix 
-                        WHERE title LIKE "%{user_input}%"
+                        WHERE title LIKE "%{film_name}%"
                         AND type = 'Movie'          
                         ORDER BY release_year DESC                        
                         LIMIT 10            
@@ -49,3 +49,24 @@ def find_genre(genre):
             dict_db['description'] = row[1]
             result.append(dict_db)
         return result
+
+    
+def serch_actors(name_one, name_two):
+    """Получает два имени, возвращает список тех кто пересекается с этими двумя именами более 2х раз"""
+result = []
+with sqlite3.connect('netflix.db') as connect:
+    cursor = connect.cursor()
+    sqlite_query =(f"""
+                   SELECT "cast"
+                   FROM netflix 
+                   WHERE "cast" LIKE "%{name_one}%"
+                   AND "cast" LIKE '%{name_two}%'    
+                   """)
+    cursor.execute(sqlite_query)
+    for row in cursor.fetchall():
+        result.extend(row[0].split(", "))
+    colleagues = []
+    for name in result:
+        if result.count(name) > 2 and name_two != name != name_one:
+            colleagues.append(name)
+    return set(colleagues)
