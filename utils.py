@@ -53,20 +53,20 @@ def find_genre(genre):
     
 def serch_actors(name_one, name_two):
     """Получает два имени, возвращает список тех кто пересекается с этими двумя именами более 2х раз"""
-result = []
-with sqlite3.connect('netflix.db') as connect:
-    cursor = connect.cursor()
-    sqlite_query =(f"""
-                   SELECT "cast"
-                   FROM netflix 
-                   WHERE "cast" LIKE "%{name_one}%"
-                   AND "cast" LIKE '%{name_two}%'    
-                   """)
-    cursor.execute(sqlite_query)
-    for row in cursor.fetchall():
-        result.extend(row[0].split(", "))
-    colleagues = []
-    for name in result:
-        if result.count(name) > 2 and name_two != name != name_one:
-            colleagues.append(name)
-    return set(colleagues)
+    result = []
+    with sqlite3.connect('netflix.db') as connect:
+        cursor = connect.cursor()
+        sqlite_query =(f"""
+                       SELECT "cast"
+                       FROM netflix 
+                       WHERE "cast" LIKE "%{name_one}%"
+                       AND "cast" LIKE '%{name_two}%'    
+                       """)
+        cursor.execute(sqlite_query)
+        for row in cursor.fetchall():
+            result.extend(row[0].split(", "))
+        colleagues = []
+        for name in result:
+            if result.count(name) > 2 and name_two != name != name_one:
+                colleagues.append(name)
+        return set(colleagues)
